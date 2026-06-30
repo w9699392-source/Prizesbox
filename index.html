@@ -440,7 +440,19 @@
                     <div id="status-8"><button onclick="startPuzzle()" class="btn-green" style="width: auto;">Solve</button></div>
                 </div>
             </div>
-
+<!-- Task 9: Daily Trivia (Nyaya / General Knowledge) -->
+<div id="task-card-10" class="task-card">
+    <div class="flex-between">
+        <div>
+            <h4>🤔 روزانہ کا عام علم (Daily Trivia)</h4>
+            <span class="task-reward">+5 Points</span>
+            <p style="color: #aaa; font-size: 12px; margin-top: 5px;">ایک آسان سوال کا جواب دیں اور 5 پوائنٹس حاصل کریں۔</p>
+        </div>
+        <div id="status-10">
+            <button onclick="startDailyTrivia()" class="btn-green" style="min-width: 80px;">جواب دیں</button>
+        </div>
+    </div>
+</div>
             <!-- Task Modals (Hidden by default) -->
             <div id="task-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; padding: 40px 20px; overflow-y: auto;">
                 <div id="modal-content"></div>
@@ -692,6 +704,46 @@ function startLuckyDraw() {
         alert(`⏳ آپ آج لکی ڈرا کر چکے ہیں! ${waitHours} گھنٹے بعد دوبارہ کوشش کریں۔`);
     }
 }
+  // === NEW TASK: Daily Trivia ===
+function startDailyTrivia() {
+    // چیک کریں کہ صارف لاگ ان ہے یا نہیں
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        alert("براہ کرم پہلے لاگ ان کریں!");
+        return;
+    }
+
+    // چیک کریں کہ کیا صارف آج یہ ٹاسک پہلے ہی کر چکا ہے؟
+    let lastTriviaDate = localStorage.getItem('lastTriviaDate');
+    let todayDate = new Date().toDateString();
+
+    if (lastTriviaDate === todayDate) {
+        alert("⏳ آپ آج یہ ٹاسک پہلے ہی کر چکے ہیں! کل دوبارہ کوشش کریں۔");
+        return;
+    }
+
+    // ایک آسان اردو سوال (ٹرائیویا)
+    let question = "پاکستان کا قومی جانور کون سا ہے؟";
+    let answer = prompt(question);
+
+    if (answer === null) {
+        alert("ٹاسک منسوخ کر دیا گیا۔");
+        return;
+    }
+
+    // جواب چیک کریں (ہمیشہ درست مان لیں گے تاکہ صارف کو پوائنٹ ملیں)
+    let points = 5;
+    currentUser.balance = (currentUser.balance || 0) + points;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    localStorage.setItem('lastTriviaDate', todayDate);
+
+    alert(`🎉 مبارک ہو! آپ کے جواب کا شکریہ۔ آپ کو ${points} پوائنٹس مل گئے!`);
+    
+    // اگر آپ کے پاس UI اپ ڈیٹ کرنے کا فنکشن ہے تو اسے کال کریں
+    if (typeof updateUI === 'function') {
+        updateUI();
+    }
+        }     
         /* 
         ========================================
         CORE STATE MANAGEMENT
