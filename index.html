@@ -665,6 +665,32 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+  // === NEW FEATURE: DAILY LUCKY DRAW ===
+function startLuckyDraw() {
+    let now = Date.now();
+    let lastDraw = localStorage.getItem('lastDrawTime') || 0;
+    let canDraw = (now - parseInt(lastDraw)) > (24 * 60 * 60 * 1000); // 24 گھنٹے کا چیک
+
+    if (canDraw) {
+        let reward = Math.floor(Math.random() * 10) + 1; // 1 سے 10 تک رینڈم پوائنٹس
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if (currentUser) {
+            // صارف کا بیلنس اپ ڈیٹ کریں
+            currentUser.balance = (currentUser.balance || 0) + reward;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('lastDrawTime', now.toString());
+            
+            alert(`🎉 مبارک ہو! آپ نے لکی ڈرا جیت لیا! آپ کو ${reward} پوائنٹس مل گئے!`);
+            updateUI(); // اگر آپ کے پاس UI اپ ڈیٹ کرنے کا فنکشن ہے
+        } else {
+            alert("براہ کرم پہلے لاگ ان کریں!");
+        }
+    } else {
+        let waitHours = Math.ceil((24 * 60 * 60 * 1000 - (now - parseInt(lastDraw))) / (60 * 60 * 1000));
+        alert(`⏳ آپ آج لکی ڈرا کر چکے ہیں! ${waitHours} گھنٹے بعد دوبارہ کوشش کریں۔`);
+    }
+}
         /* 
         ========================================
         CORE STATE MANAGEMENT
